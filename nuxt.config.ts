@@ -10,7 +10,7 @@ export default defineNuxtConfig({
       ],
       script: [{ src: 'https://telegram.org/js/telegram-web-app.js' }]
     },
-    baseURL: '/nuxt-github-pages/', // baseURL: '/<repository>/'
+    baseURL: '/tap_front/', // baseURL: '/<repository>/'
     buildAssetsDir: 'assets', // don't use "_" at the begining of the folder name to avoids
   },
 
