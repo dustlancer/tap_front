@@ -1,0 +1,68 @@
+[
+    {
+      "id": 1,
+      "title": "Подписаться на Telegram-канал",
+      "points": 100,
+      "done": false,
+      "claimed": false,
+      "link": "https://t.me/some_channel"
+    },
+    {
+      "id": 2,
+      "title": "Лайкнуть пост в Instagram",
+      "points": 50,
+      "done": false,
+      "claimed": false,
+      "link": "https://instagram.com/some_post"
+    },
+    {
+      "id": 3,
+      "title": "Подписаться на Twitter",
+      "points": 70,
+      "done": false,
+      "claimed": false,
+      "link": "https://twitter.com/some_profile"
+    },
+    {
+      "id": 3,
+      "title": "Подписаться на Twitter",
+      "points": 70,
+      "done": false,
+      "claimed": false,
+      "link": "https://twitter.com/some_profile"
+    },
+    {
+      "id": 3,
+      "title": "Подписаться на Twitter",
+      "points": 70,
+      "done": false,
+      "claimed": false,
+      "link": "https://twitter.com/some_profile"
+    },
+    {
+      "id": 3,
+      "title": "Подписаться на Twitter",
+      "points": 70,
+      "done": false,
+      "claimed": false,
+      "link": "https://twitter.com/some_profile"
+    },
+    {
+      "id": 3,
+      "title": "Подписаться на Twitter",
+      "points": 70,
+      "done": false,
+      "claimed": false,
+      "link": "https://twitter.com/some_profile"
+    },
+    {
+      "id": 3,
+      "title": "Подписаться на Twitter",
+      "points": 70,
+      "done": false,
+      "claimed": false,
+      "link": "https://twitter.com/some_profile"
+    }
+
+  ]
+  
