@@ -3,7 +3,6 @@
     <!-- <h1 class="text-2xl font-bold text-white mb-4">Задания</h1> -->
 
     <div class="task h-[100%] overflow-y-scroll scrollable pt-[10px] pb-[30px]" style="overflow-y: auto;">
-      
         <!-- Невыполненные задания -->
         <div v-if="pendingTasks.length">
           <h2 class="text-xl font-semibold text-white mb-2">Доступные задания</h2>
@@ -13,7 +12,6 @@
             :task="task"
           />
         </div>
-
         <!-- Завершённые задания -->
         <div v-if="completedTasks.length" class="mt-8">
           <h2 class="text-xl font-semibold text-white mb-2">Завершённые задания</h2>
@@ -31,8 +29,17 @@
 import { ref, onMounted } from 'vue';
 import TaskItem from '@/components/Tasks/TaskItem.vue';
 import tasksData from '@/assets/tasks.json';
+// import { useWebAppPopup } from 'vue-tg';
+// import { useUserStore } from '~/stores/userStore';
+// const userStore = useUserStore();
+import { useUserStore } from '~/stores/user'
+    
+    
+const user = useUserStore();
 
 const tasks = ref([]);
+// const avatarUrl = computed(() => userStore.getAvatarUrl);
+const au = ref(undefined);
 
 // Загружаем задания из JSON при монтировании компонента
 onMounted(() => {

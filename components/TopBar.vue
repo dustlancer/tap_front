@@ -12,80 +12,103 @@
                 <span>{{ level }} ур.</span>
             </div>
         </div>
-
         <!-- Компонент "Монеты в час" -->
-        <div class="flex flex-col items-start">
+        <!-- <div class="flex flex-col items-start">
             <span class="font-thin text-sm">Монет в час</span>
             <div class="flex items-center space-x-1 font-bold">
                 <img src="/coin.png" alt="Coin Icon" class="w-6 h-6" />
                 <span>{{ coinsPerHour }}</span>
             </div>
-        </div>
+        </div> -->
 
         <div class="flex flex-col items-start">
             <span class="font-thin text-sm">Баланс</span>
-            <div class="flex items-center space-x-1 font-bold">
+            <div class="flex items-center space-x-1 font-bold w-7">
                 <img src="/coin.png" alt="Coin Icon" class="w-6 h-6" />
-                <span>{{ coinsPerHour }}</span>
+                <span>{{ balance }}</span>
             </div>
         </div>
 
         <!-- Кнопка Community -->
-        <button class="bg-blue-600 px-4 py-2 rounded text-sm hover:bg-blue-700">
+        <button class="bg-blue-600 px-4 py-2 rounded text-sm hover:bg-blue-700"
+            @click="init_user">
         Ваучеры
         </button>
     </div>
 </template>
 
 <script setup>
+    // import { useUserStore } from '~/stores/userStore'
     import { ref, onMounted } from 'vue';
-    import { useWebApp } from 'vue-tg';
+    import { useWebApp, useWebAppPopup } from 'vue-tg';
+    import { useUserStore } from '~/stores/user'
+    import { useClickStore } from '~/stores/click';
     
-
+    
+    const user = useUserStore();
     // Аватар пользователя из Telegram, или дефолтное изображение
     const avatar = ref('default_avatar.png');  // Замени на реальный путь к дефолтному изображению
-    const level = ref(1);  // Уровень пользователя
-    const coinsPerHour = ref(100);  // Количество монет в час
+    const level = ref(0);  // Уровень пользователя
+    const coinsPerHour = ref(0);  // Количество монет в час
+    const balance = computed(() => user.local_coins);
 
-    const { initDataUnsafe } = useWebApp();
+    // const { showAlert } = useWebAppPopup();
+    // const { initDataUnsafe } = useWebApp();
+
+    function init_topbar() {
+        if (user.avatar_url) { avatar.value = user.avatar_url; }
+        level.value = user.level.level_number;
+        coinsPerHour.value = user.mining_speed;
+        balance.value = user.coins;
+        v.value = user.user_id;
+    };
+
+    async function init_user() {
+        // const userData = initDataUnsafe?.user;
+        // showAlert(JSON.stringify(userData));
+
+        const d = {
+            "id": 454338166,
+            "first_name": "Андрей",
+            "last_name": "",
+            "username": "paenny",
+            "language_code": "ru",
+            "allows_write_to_pm": true
+        };
+
+        try {
+            const response = await fetch('http://dustlancer.keenetic.pro:44427/telegram/init/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(d)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert('ok');
+                // showAlert(data.avatar_url);
+                // avatar.value=data.avatar_url;
+                user.setUserData(data);
+                // userStore.setAvatarUrl(data.avatar_url);
+                console.log('User data sent successfully:', data);
+            } else {
+                console.error('Failed to send user data:', response.status);
+            }
+        } catch (error) {
+            // showAlert(`e:${error}`);
+            alert(error);
+            console.error('Error:', error);
+        }
+    }
 
     onMounted(async () => {
-        // Проверка наличия данных пользователя
-        // if (initDataUnsafe?.user && initDataUnsafe.user.id) {
-        //     user.value = initDataUnsafe.user;
-
-        //     const data = await $fetch(`http://localhost:8000/get-avatar/${user.id}/`, {
-        //     });
-
-        //     if (data) {
-        //         avatar.value = data.avatar_url;
-        //     }
-        // } else {
-        //     alert('Ошибка получения данных пользователя');
-        // }
-
-        // const user_id=454338166;
-        // const datat = await $fetch(`get-avatar/${user_id}/`, {
-        // });
-
-        // if (datat) {
-        //     avatar.value = data.avatar_url;
-        // }
-
-        // // Если уровень передаётся откуда-то
-        // level.value = 1;
+        // init_user();
+        init_topbar();
     });
 
-    async function get_avatar() {
-        const user_id = 454338166;
-        const data1 = await $fetch(`http://9f74ea0d-0820-418e-9474-aeb6fb4cda2d.tunnel4.com/get-avatar/${user_id}/`, {
-        });
 
-        avatar.value=data1.avatar_url;
-
-        // console.log(data1);
-    
-    }
 </script>
 
 <style scoped>

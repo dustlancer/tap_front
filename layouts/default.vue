@@ -2,6 +2,7 @@
 import Navbar from '@/components/Navbar.vue';
 import TopBar from '@/components/TopBar.vue';
 import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { useUserStore } from '~/stores/user'
 
 // Добавляем скрипт для Telegram WebApp
 useHead({
@@ -10,8 +11,9 @@ useHead({
   ],
 });
 
-const loading = ref(true);
+
 const isMaintenance = ref(false); // Флаг для экрана обслуживания
+const userStore = useUserStore();  // Подключаем Store
 
 
 // Функция для предотвращения скролла на странице
@@ -28,17 +30,18 @@ function preventScroll(e) {
   e.preventDefault();
 }
 
-onMounted(() => {
+onMounted(async () => {
   // isMaintenance.value = true; // Включи это, если бот на обслуживании
-  setTimeout(() => {
-    loading.value = false; // Убираем экран загрузки
-  }, 6000); // Задержка на 2 секунды для демонстрации
+  await userStore.fetchUserData(); // Вызов функции загрузки данных при запуске приложения
+  // setTimeout(() => {
+  //   loading.value = false; // Убираем экран загрузки
+  // }, 1000); // Задержка на 2 секунды для демонстрации
    // Пример проверки состояния бота (может быть заменён запросом к API)
   
   document.addEventListener('touchmove', preventScroll, { passive: false });
 });
 
-
+const loading = computed(() => userStore.isLoading); // Связываем состояние загрузки
 
 
 onBeforeUnmount(() => {
@@ -51,12 +54,11 @@ onBeforeUnmount(() => {
     <main>
         <!-- Экран обслуживания -->
         <MaintenanceScreen v-if="isMaintenance" />
-
         <!-- Экран загрузки -->
         <LoadingScreen v-else-if="loading" />
         <ClientOnly v-else>
           <TopBar/>
-          <!-- Пример элемента, который можно прокручивать -->
+          <!-- Пример элемента, который можно прокручивать -->     
             <slot />
           <Navbar/>
         </ClientOnly>
