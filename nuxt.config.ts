@@ -13,8 +13,8 @@ export default defineNuxtConfig({
         { rel: 'preload', href: '/airdrop.png', as: 'image' }
       ],
     },
-    baseURL: '/', // baseURL: '/<repository>/'
-    // buildAssetsDir: 'assets', // don't use "_" at the begining of the folder name to avoids
+    baseURL: '/tap_front/', // baseURL: '/<repository>/'
+    buildAssetsDir: 'assets', // don't use "_" at the begining of the folder name to avoids
   },
 
   // Включение инструментов разработчика

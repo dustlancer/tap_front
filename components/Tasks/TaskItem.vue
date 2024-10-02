@@ -46,9 +46,9 @@
   
   <script setup>
   import { ref } from 'vue';
-  import { useToast } from 'vue-toastification';
+
   
-  const toast = useToast();
+
   const props = defineProps({
     task: Object
   });
@@ -76,7 +76,7 @@
   // Забрать очки
   const claimPoints = () => {
     props.task.claimed = true; // Задача завершена
-    toast.success(`Успешно получено ${props.task.points} очков!`);
+
   };
   </script>
   
