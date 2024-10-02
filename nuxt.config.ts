@@ -38,7 +38,7 @@ export default defineNuxtConfig({
   // Настройка для API-запросов будет использовать стандартные методы Nuxt 3
   runtimeConfig: {
     public: {
-      apiBase: 'http://localhost:8000',  // Например: 'http://192.168.1.100:8000'
+      apiBase: 'http://dustlancer.keenetic.pro:44427',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427'
     }
   },
 })

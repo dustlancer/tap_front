@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { useRuntimeConfig } from '#app'; 
 
+
 const d = {
   "id": 454338166,
   "first_name": "Андрей",
@@ -31,7 +32,33 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     async fetchUserData() {
+      let useWebApp;
+      let userData;
+
+      try {
+        const module = await import('vue-tg');
+        useWebApp = module.useWebApp;
+        console.error("Ошибка при импорте useWebApp NOT HAPPENED");
+        const { initDataUnsafe } = useWebApp();
+        const userFromTg = initDataUnsafe?.user;
+        if (userFromTg) {
+          userData = userFromTg;
+          console.info('Connected with tg')
+        } else {
+          console.error('Failed to connect with tg, boot locally');
+          userData = d;
+        }
+
+      } catch (error) {
+        console.error("Ошибка при импорте useWebApp:", error);
+        // Здесь можно обработать ошибку, например, показать уведомление пользователю
+        userData = d;
+      }
+
+
+
       this.isLoading = true;
+    
       try {
         const config = useRuntimeConfig(); // Доступ к переменным среды
         const apiUrl = config.public.apiBase; // Доступ к API URL
@@ -40,7 +67,7 @@ export const useUserStore = defineStore('user', {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(d)
+            body: JSON.stringify(userData)
         });
 
         if (response.ok) {

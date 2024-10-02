@@ -50,7 +50,7 @@
   const backgroundImg = ref('dirty_city_bg.png')
   
   // Счётчик монет
-  const coins = ref(userStore.coins);
+  const coins = computed(() => userStore.local_coins);
   // const coins = useCoins();
   const isClicked = ref(false);
 
@@ -61,10 +61,11 @@
   
   // Функция для увеличения количества монет и запуска анимаций
   function increaseCoins(event) {
-    coins.value += 1;
+  
     // balance.value += userStore.coins_per_tap;
     clickStore.incrementClicks();
     userStore.updateLocalCoins();
+
     // Запускаем анимацию увеличения персонажа
     isClicked.value = true;
     setTimeout(() => {
