@@ -38,7 +38,7 @@ export default defineNuxtConfig({
   // Настройка для API-запросов будет использовать стандартные методы Nuxt 3
   runtimeConfig: {
     public: {
-      apiBase: 'https://51ad998baacc50.lhr.life',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427', 'https://8f6105dfbcb6b4caadfe532d8560b8ce.serveo.net'
+      apiBase: 'https://0ad8a28518cba6.lhr.life',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427', 'https://8f6105dfbcb6b4caadfe532d8560b8ce.serveo.net'
     }
   },
   plugins: [
