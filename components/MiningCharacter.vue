@@ -41,7 +41,7 @@ const config = useRuntimeConfig();
 const userStore = useUserStore();
 
 const coinsInPiggyBank = ref(0);
-const maxCoinsInPiggyBank = ref(100); // Максимальная ёмкость копилки
+const maxCoinsInPiggyBank = ref(0); // Максимальная ёмкость копилки
 const miningSpeed = ref(5); // Скорость майнинга (монеты в час)
 const characterImage = ref('/ermak_bomzh-removebg-preview.png');
 const backgroundImg = ref('dirty_city_bg.png');
@@ -122,7 +122,9 @@ async function fetchUserData() {
 
 onMounted(() => {
   set_images();
-  fetchUserData(); // Загружаем данные пользователя
+  setTimeout(() => {
+    fetchUserData(); // Загружаем данные пользователя
+  }, 1000);
 });
 
 onUnmounted(() => {
