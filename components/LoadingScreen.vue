@@ -2,10 +2,10 @@
     <div class="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-blue-900 to-gray-800 text-white">
       <!-- Центровое изображение -->
       <div class="text-center relative">
-        <img src="/dirty_city_bg.png" alt="Loading Image" class="w-[500px] pt-10 mb-4" />
-        <div class="loader-info absolute bottom-0 w-full">
+        <img src="/loading.png" alt="Loading Image" class="w-[300px] -pt-[300px] -mt-10 mb-4" />
+        <div class="loader-info absolute -bottom-[80px] w-full">
             <div class="loader mb-2 mx-auto"></div>
-            <h2 class="text-2xl font-bold">Загрузка...</h2>
+            <!-- <h2 class="text-2xl font-bold">Загрузка...</h2> -->
         </div>
       </div>
     </div>

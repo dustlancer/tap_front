@@ -13,8 +13,8 @@ export default defineNuxtConfig({
         { rel: 'preload', href: '/airdrop.png', as: 'image' }
       ],
     },
-    baseURL: '/tap_front/', // baseURL: '/<repository>/'
-    buildAssetsDir: 'assets', // don't use "_" at the begining of the folder name to avoids
+    baseURL: '/', // baseURL: '/<repository>/' tap_front/
+    // buildAssetsDir: 'assets', // don't use "_" at the begining of the folder name to avoids
   },
 
   // Включение инструментов разработчика
@@ -38,7 +38,10 @@ export default defineNuxtConfig({
   // Настройка для API-запросов будет использовать стандартные методы Nuxt 3
   runtimeConfig: {
     public: {
-      apiBase: 'https://8f6105dfbcb6b4caadfe532d8560b8ce.serveo.net',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427'
+      apiBase: 'http://localhost:8000',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427', 'https://8f6105dfbcb6b4caadfe532d8560b8ce.serveo.net'
     }
   },
+  plugins: [
+    '~/plugins/mediaUrl.js'
+  ],
 })

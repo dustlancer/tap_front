@@ -1,145 +1,137 @@
 <template>
-    <div class="flex flex-col absolute top-0 w-screen z-10 items-center justify-center h-screen bg-gradient-to-b from-blue-500 to-gray-700"
-    @click="increaseCoins">
-      <div :style="backgroundImageStyle"></div>
-      <!-- Счётчик монет -->
-      <div class="absolute top-[15%] flex items-center text-4xl font-bold text-white mb-4">
+  <div class="flex flex-col absolute top-0 w-screen z-10 items-center justify-center h-screen bg-gradient-to-b from-blue-500 to-gray-700">
+    <div :style="backgroundImageStyle"></div>
+
+    <!-- Изображение персонажа -->
+    <img
+      :src="characterImage"
+      alt="Персонаж"
+      class="w-48 h-48 object-contain transition-transform duration-300 absolute"
+    />
+
+    <!-- Счётчик монет в копилке без анимации -->
+    <div class="w-full text-center flex-col align-center absolute bottom-[15%] px-7">
+      <div class="flex items-center text-4xl font-bold text-white mb-1">
         <div>
-          <p class="">{{ coins }}</p>
+          <p class="text-lg">{{ coinsInPiggyBank.toFixed(2) }} / {{ maxCoinsInPiggyBank.toFixed(2) }}</p>
         </div>
-        <!-- <div>
-          <img src="/coin.png" alt="Coin Icon" class="w-10 h-10" />
-        </div> -->
       </div>
-      
-  
-      <!-- Изображение персонажа с анимацией увеличения при клике -->
-      <img
-        :src="characterImage"
-        alt="Персонаж"
-        class="w-48 h-48 object-contain transition-transform duration-300 absolute top-[35%]"
-        :class="{ 'scale-125': isClicked }"
-      />
-  
-      <!-- Анимация текста заработанных очков -->
-      <transition-group name="score" tag="div" class="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div
-          v-for="score in scoreList"
-          :key="score.id"
-          :style="{ top: score.top + 'px', left: score.left + 'px', transform: `translateY(${score.translateY}px)`, opacity: score.opacity }"
-          class="absolute text-[30px] font-bold text-white"
-        >
-          +{{ score.points }}
-        </div>
-      </transition-group>
+      <div class="h-4 bg-gray-300 rounded-full">
+        <div class="h-full bg-green-500 rounded-full transition-all duration-500" :style="{ width: fillPercentage + '%' }"></div>
+      </div>
     </div>
+
+    <!-- Кнопка для забора монет -->
+    <button
+      v-if="canClaim"
+      @click="claimCoins"
+      class="absolute bottom-[23%] bg-yellow-400 text-black font-bold py-2 px-4 rounded"
+    >
+      Забрать {{ coinsInPiggyBank.toFixed(2) }} монет
+    </button>
+  </div>
 </template>
 
-
-  
 <script setup>
-  import { ref } from 'vue';
-  import { useClickStore } from '~/stores/click'
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useUserStore } from '~/stores/user';
+import { useRuntimeConfig } from '#imports';
 
+const config = useRuntimeConfig();
+const userStore = useUserStore();
 
-  const config = useRuntimeConfig();
-  const userStore = useUserStore();
-  const clickStore = useClickStore();
-  // Ссылка на изображение персонажа
-  const characterImage = ref('/ermak_bomzh-removebg-preview.png');
-  const backgroundImg = ref('dirty_city_bg.png')
-  
-  // Счётчик монет
-  const coins = computed(() => userStore.local_coins);
-  // const coins = useCoins();
-  const isClicked = ref(false);
+const coinsInPiggyBank = ref(0);
+const maxCoinsInPiggyBank = ref(100); // Максимальная ёмкость копилки
+const miningSpeed = ref(5); // Скорость майнинга (монеты в час)
+const characterImage = ref('/ermak_bomzh-removebg-preview.png');
+const backgroundImg = ref('dirty_city_bg.png');
+const lastClaimTime = ref(new Date());
 
-  let timer;
-  
-  // Массив для анимации текста заработанных очков
-  const scoreList = ref([]);
-  
-  // Функция для увеличения количества монет и запуска анимаций
-  function increaseCoins(event) {
-  
-    // balance.value += userStore.coins_per_tap;
-    clickStore.incrementClicks();
-    userStore.updateLocalCoins();
+const fillPercentage = computed(() => (coinsInPiggyBank.value / maxCoinsInPiggyBank.value) * 100);
+const canClaim = computed(() => coinsInPiggyBank.value >= maxCoinsInPiggyBank.value);
 
-    // Запускаем анимацию увеличения персонажа
-    isClicked.value = true;
-    setTimeout(() => {
-      isClicked.value = false;
-    }, 100);
-  
-    // Добавляем новый элемент для анимации текста
-    const newScore = {
-      id: Date.now(),
-      points: userStore.coins_per_tap, // Заработанные очки
-      top: event.clientY - 50, // Позиция по Y, с небольшим смещением
-      left: event.clientX, // Позиция по X
-      translateY: 0, // Начальное значение для перемещения по Y
-      opacity: 1 // Начальная непрозрачность
-    };
-  
-    scoreList.value.push(newScore);
-  
-    // Запускаем анимацию сразу
-    requestAnimationFrame(() => {
-      const scoreIndex = scoreList.value.findIndex(score => score.id === newScore.id);
-      if (scoreIndex !== -1) {
-        scoreList.value[scoreIndex].translateY = -75; // Двигаем вверх на 50px
-        scoreList.value[scoreIndex].opacity = 0; // Исчезаем
-      }
-    });
-  
-    // Убираем элемент через 1 секунду
-    setTimeout(() => {
-      scoreList.value = scoreList.value.filter(score => score.id !== newScore.id);
-    }, 1200);
+let intervalId;
+
+function claimCoins() {
+  // Обновляем время последнего клейма
+  lastClaimTime.value = new Date();
+  userStore.claimCoins(coinsInPiggyBank.value);
+
+  // Обнуляем количество монет и начинаем процесс накопления заново
+  coinsInPiggyBank.value = 0;
+
+  // Сбрасываем таймер и запускаем процесс заполнения копилки заново
+  clearInterval(intervalId);
+  startTimer();
+}
+
+function updatePiggyBank() {
+  const currentTime = new Date();
+  const timeDiff = (currentTime - lastClaimTime.value) / (1000 * 60 * 60); // Разница во времени в часах
+  const minedCoins = Math.min(timeDiff * miningSpeed.value, maxCoinsInPiggyBank.value);
+
+  coinsInPiggyBank.value = minedCoins;
+
+  // Если копилка заполнилась, останавливаем таймер
+  if (minedCoins >= maxCoinsInPiggyBank.value) {
+    clearInterval(intervalId);
   }
+}
 
+function startTimer() {
+  intervalId = setInterval(() => {
+    updatePiggyBank();
+  }, 1000); // Обновляем каждые 1 секунду
+}
 
-  const backgroundImageStyle = computed(() => ({
-    backgroundImage: `url(${backgroundImg.value})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    filter: 'grayscale(100%) contrast(400%)',
-    mixBlendMode: 'screen',
-    opacity: 0.7,
-    width: '100%',
-    height: '100%',
-  }))
-  function set_images() {
-    characterImage.value = config.public.apiBase + userStore.level.character_image_url;
-    backgroundImg.value = config.public.apiBase + userStore.level.background_image_url;
-  };
+function set_images() {
+  characterImage.value = config.public.apiBase + userStore.level.character_image_url;
+  backgroundImg.value = config.public.apiBase + userStore.level.background_image_url;
+}
 
-  onMounted(() => {
-    set_images();
-    timer = setInterval(() => {
-      clickStore.sendClicksToBackend(); // Отправляем клики на бэкенд
-    }, 5000); // 10 секунд
-  });
+const backgroundImageStyle = computed(() => ({
+  backgroundImage: `url(${backgroundImg.value})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  filter: 'grayscale(100%) contrast(400%)',
+  mixBlendMode: 'screen',
+  opacity: 0.7,
+  width: '100%',
+  height: '100%',
+}))
 
+async function fetchUserData() {
+  try {
+    const response = await fetch(`${config.public.apiBase}/api/user-storage/?user_id=${userStore.user_id}`);
+    if (!response.ok) {
+      throw new Error("Ошибка загрузки данных пользователя");
+    }
+    const data = await response.json();
+    const { storage_capacity, mining_speed, last_claim_time } = data;
     
+    maxCoinsInPiggyBank.value = storage_capacity;
+    miningSpeed.value = mining_speed;
+    lastClaimTime.value = new Date(last_claim_time);
+    
+    // Запускаем таймер для обновления копилки
+    startTimer();
+  } catch (error) {
+    console.error("Ошибка при загрузке данных: ", error);
+  }
+}
+
+onMounted(() => {
+  set_images();
+  fetchUserData(); // Загружаем данные пользователя
+});
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId); // Очищаем таймер при размонтировании компонента
+  }
+});
 </script>
-  
+
 <style scoped>
-  /* Добавляем анимацию для текста */
-  .score-enter-active, .score-leave-active {
-    transition: all 1s ease-out;
-  }
-  /* Контурное изображение */
-  .image-overlay {
-    width: 100%;
-    height: 100%;
-    background-image: url('dirty_city_bg.png'); /* Путь к вашему изображению */
-    background-size: cover;
-    background-position: center;
-    filter: grayscale(100%) contrast(400%); /* Чёрно-белый фильтр и усиление контуров */
-    mix-blend-mode: screen; /* Наложение контура на синий фон */
-    opacity: 0.7; /* Прозрачность, чтобы контуры были более мягкими */
-  }
+/* Больше нет анимации для счётчика */
 </style>
-  

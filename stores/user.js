@@ -76,12 +76,14 @@ export const useUserStore = defineStore('user', {
             console.log('User data set successfully:', data);
         } else {
             console.error('Failed to send user data:', response.status);
+
         }
-    } catch (error) {
-        console.error('Error:', error);
-    } finally {
-      this.isLoading = false;
-    }
+      } catch (error) {
+          console.error('Error:', error);
+          this.isMaintenance = true;
+      } finally {
+        this.isLoading = false;
+      }
     },
     updateCoins(_coins) {
       this.coins = _coins;
@@ -98,6 +100,32 @@ export const useUserStore = defineStore('user', {
       this.coins = data.coins
       this.coins_per_tap = data.coins_per_tap
       this.local_coins = data.coins
-    }
+    },
+    async claimCoins(coinsInPiggyBank) {
+      try {
+        const config = useRuntimeConfig(); // Доступ к переменным среды
+        const apiUrl = config.public.apiBase; // Доступ к API URL
+        const response = await fetch(`${apiUrl}/api/claim-coins/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: this.user_id,
+            claimed_coins: coinsInPiggyBank,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Ошибка при попытке забрать монеты');
+        }
+
+        const data = await response.json();
+        // Обновляем время последнего клейма
+        this.local_coins += coinsInPiggyBank;
+      } catch (error) {
+        console.error('Ошибка при клейме монет:', error);
+      }
+    },
   }
 })

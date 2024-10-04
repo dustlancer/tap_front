@@ -31,8 +31,8 @@
 
         <!-- Кнопка Community -->
         <button class="bg-blue-600 px-4 py-2 rounded text-sm hover:bg-blue-700"
-            @click="init_user">
-        Ваучеры
+                >
+        Бейджи
         </button>
     </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
 <div class="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br from-pink-500 to-indigo-500 text-white">
     <!-- Картинка AirDrop -->
-    <nuxt-img src="/airdrop.png" alt="AirDrop" class="w-64 h-64 mb-4" />
+    <nuxt-img :src="mediaUrl('images/a.jpg')" alt="AirDrop" class="w-64 h-64 mb-4" />
 
     <!-- Надписи -->
     <h1 class="text-4xl font-bold mb-2">Скоро</h1>
@@ -16,6 +16,7 @@
 
 <script setup>
     import { useRouter } from 'vue-router';
+    import { mediaUrl } from '~/utils/mediaUrl'
 
     // Функция для перехода на главную страницу (index)
     const router = useRouter();

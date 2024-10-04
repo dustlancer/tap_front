@@ -12,7 +12,7 @@ useHead({
 });
 
 
-const isMaintenance = ref(false); // Флаг для экрана обслуживания
+const isMaintenance = computed(() => userStore.isMaintenance);
 const userStore = useUserStore();  // Подключаем Store
 
 
@@ -42,7 +42,7 @@ onMounted(async () => {
 });
 
 const loading = computed(() => userStore.isLoading); // Связываем состояние загрузки
-
+// const loading = true;
 
 onBeforeUnmount(() => {
   document.removeEventListener('touchmove', preventScroll);
