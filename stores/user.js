@@ -32,6 +32,7 @@ export const useUserStore = defineStore('user', {
     inviter_id: null,
     abraka:null,
     raw_data: undefined,
+    tasks: [], 
   }),
   actions: {
     async fetchUserData() {
@@ -96,6 +97,62 @@ export const useUserStore = defineStore('user', {
         this.isLoading = false;
       }
     },
+    async fetchTasks() {
+      try {
+        const config = useRuntimeConfig(); // Доступ к переменным среды
+        const apiUrl = config.public.apiBase; // Доступ к API URL
+        const response = await fetch(`${apiUrl}/api/tasks/?user_id=${this.user_id}`);
+
+        if (response.ok) {
+          const data = await response.json();
+          this.tasks = data; // Сохраняем полученные задания
+        } else {
+          console.error('Failed to fetch tasks:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    },
+    async claimTaskReward(taskId) {
+        try {
+          const config = useRuntimeConfig();
+          const apiUrl = config.public.apiBase;
+          const response = await fetch(`${apiUrl}/api/claim-task/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              user_id: this.user_id,
+              task_id: taskId,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Обновляем статус задачи на "забрано"
+            const task = this.tasks.find(t => t.id === taskId);
+
+            // if (task && !task.is_claimed) {
+            //   this.coins += task.reward; // Увеличиваем количество монет
+            // }
+
+            if (task) {
+              task.is_claimed = true;
+            }
+            // Обновляем баланс монет на основе ответа с сервера
+            if (data.new_balance !== undefined) {
+              this.coins = data.new_balance;  // Обновляем баланс в сторе
+            }
+
+            return data;
+          } else {
+            console.error('Failed to claim task reward:', response.status);
+          }
+        } catch (error) {
+          console.error('Error claiming task reward:', error);
+        }
+    },
     updateCoins(_coins) {
       this.coins = _coins;
     },
@@ -134,6 +191,7 @@ export const useUserStore = defineStore('user', {
         const data = await response.json();
         // Обновляем время последнего клейма
         this.local_coins += coinsInPiggyBank;
+        this.coins += coinsInPiggyBank;
       } catch (error) {
         console.error('Ошибка при клейме монет:', error);
       }

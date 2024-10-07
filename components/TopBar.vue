@@ -56,7 +56,7 @@
     const avatar = ref('default_avatar.png');  // Замени на реальный путь к дефолтному изображению
     const level = ref(0);  // Уровень пользователя
     const coinsPerHour = ref(0);  // Количество монет в час
-    const balance = computed(() => user.local_coins);
+    const balance = computed(() => user.coins);
 
     // const { showAlert } = useWebAppPopup();
     // const { initDataUnsafe } = useWebApp();
@@ -66,48 +66,8 @@
         level.value = user.level.level_number;
         coinsPerHour.value = user.mining_speed;
         balance.value = user.coins;
-        v.value = user.user_id;
+        // v.value = user.user_id;
     };
-
-    async function init_user() {
-        // const userData = initDataUnsafe?.user;
-        // showAlert(JSON.stringify(userData));
-
-        const d = {
-            "id": 454338166,
-            "first_name": "Андрей",
-            "last_name": "",
-            "username": "paenny",
-            "language_code": "ru",
-            "allows_write_to_pm": true
-        };
-
-        try {
-            const response = await fetch('http://dustlancer.keenetic.pro:44427/telegram/init/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(d)
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert('ok');
-                // showAlert(data.avatar_url);
-                // avatar.value=data.avatar_url;
-                user.setUserData(data);
-                // userStore.setAvatarUrl(data.avatar_url);
-                console.log('User data sent successfully:', data);
-            } else {
-                console.error('Failed to send user data:', response.status);
-            }
-        } catch (error) {
-            // showAlert(`e:${error}`);
-            alert(error);
-            console.error('Error:', error);
-        }
-    }
 
     onMounted(async () => {
         // init_user();

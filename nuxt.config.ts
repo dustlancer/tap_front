@@ -38,10 +38,10 @@ export default defineNuxtConfig({
   // Настройка для API-запросов будет использовать стандартные методы Nuxt 3
   runtimeConfig: {
     public: {
-      apiBase: 'https://46025e69cc319d72551e9cfe3baad4d7.serveo.net',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427', 'https://8f6105dfbcb6b4caadfe532d8560b8ce.serveo.net'
+      apiBase: 'https://f27695568ef062e4e5a1452ad9a1fc1d.serveo.net',  // Например: 'http://192.168.1.100:8000' 'http://dustlancer.keenetic.pro:44427', 'https://8f6105dfbcb6b4caadfe532d8560b8ce.serveo.net'
     }
   },
-  // 
+  // https://46025e69cc319d72551e9cfe3baad4d7.serveo.net
   plugins: [
     '~/plugins/mediaUrl.js'
   ],
