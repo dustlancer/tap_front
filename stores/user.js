@@ -28,7 +28,10 @@ export const useUserStore = defineStore('user', {
     mining_speed: 0,
     storage_capacity: 0,
     coins: 0,
-    local_coins:0
+    local_coins: 0,
+    inviter_id: null,
+    abraka:null,
+    raw_data: undefined,
   }),
   actions: {
     async fetchUserData() {
@@ -41,9 +44,17 @@ export const useUserStore = defineStore('user', {
         console.error("Ошибка при импорте useWebApp NOT HAPPENED");
         const { initDataUnsafe } = useWebApp();
         const userFromTg = initDataUnsafe?.user;
+        this.raw_data = initDataUnsafe;
         if (userFromTg) {
           userData = userFromTg;
+          if (initDataUnsafe?.start_param) {
+            userData.inviter_id = initDataUnsafe?.start_param;
+          }
+
+          this.inviter_id = initDataUnsafe.startapp;
           console.info('Connected with tg')
+          let startParam = window.Telegram.WebApp.initDataUnsafe.startapp;
+          this.abraka = startParam;
         } else {
           console.error('Failed to connect with tg, boot locally');
           userData = d;

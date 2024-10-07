@@ -30,10 +30,12 @@
         </div>
 
         <!-- Кнопка Community -->
-        <button class="bg-blue-600 px-4 py-2 rounded text-sm hover:bg-blue-700"
+        <button class="bg-yellow-600 px-4 py-2 rounded text-sm hover:bg-blue-700"
                 >
-        Бейджи
+                v0.3.1
         </button>
+
+        <!-- <div>{{aka}}</div> -->
     </div>
 </template>
 
@@ -45,7 +47,11 @@
     import { useClickStore } from '~/stores/click';
     
     
+    
     const user = useUserStore();
+    const mon = computed(()=> user.inviter_id);
+    const a = computed(() => user.abraka);
+    const aka = computed(() => user.raw_data);
     // Аватар пользователя из Telegram, или дефолтное изображение
     const avatar = ref('default_avatar.png');  // Замени на реальный путь к дефолтному изображению
     const level = ref(0);  // Уровень пользователя

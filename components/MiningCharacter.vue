@@ -41,14 +41,14 @@ const config = useRuntimeConfig();
 const userStore = useUserStore();
 
 const coinsInPiggyBank = ref(0);
-const maxCoinsInPiggyBank = ref(0); // Максимальная ёмкость копилки
+const maxCoinsInPiggyBank = ref(userStore.storage_capacity); // Максимальная ёмкость копилки
 const miningSpeed = ref(5); // Скорость майнинга (монеты в час)
 const characterImage = ref('/ermak_bomzh-removebg-preview.png');
 const backgroundImg = ref('dirty_city_bg.png');
 const lastClaimTime = ref(new Date());
 
-const fillPercentage = computed(() => (coinsInPiggyBank.value / maxCoinsInPiggyBank.value) * 100);
-const canClaim = computed(() => coinsInPiggyBank.value >= maxCoinsInPiggyBank.value);
+let fillPercentage = 0;
+let canClaim = false;
 
 let intervalId;
 
@@ -71,6 +71,8 @@ function updatePiggyBank() {
   const minedCoins = Math.min(timeDiff * miningSpeed.value, maxCoinsInPiggyBank.value);
 
   coinsInPiggyBank.value = minedCoins;
+  fillPercentage = computed(() => (coinsInPiggyBank.value / maxCoinsInPiggyBank.value) * 100);
+  canClaim = computed(() => coinsInPiggyBank.value >= maxCoinsInPiggyBank.value);
 
   // Если копилка заполнилась, останавливаем таймер
   if (minedCoins >= maxCoinsInPiggyBank.value) {
@@ -124,7 +126,7 @@ onMounted(() => {
   set_images();
   setTimeout(() => {
     fetchUserData(); // Загружаем данные пользователя
-  }, 1000);
+  }, 0);
 });
 
 onUnmounted(() => {
